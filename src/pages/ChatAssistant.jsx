@@ -3,24 +3,28 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { Send, Bot, User, RotateCcw, Sparkles } from 'lucide-react'
 import { BOT_KNOWLEDGE, QUICK_QUESTIONS } from '../data/electionData'
 
+function sanitizeText(text) {
+  return String(text).replace(/\*\*/g, '')
+}
+
 function getBotResponse(message) {
   const lower = message.toLowerCase().trim()
 
   // Greetings
   if (BOT_KNOWLEDGE.greetings.some((g) => lower.includes(g))) {
-    return BOT_KNOWLEDGE.greetingResponse
+    return sanitizeText(BOT_KNOWLEDGE.greetingResponse)
   }
 
   // Topic matching
   for (const [, topicData] of Object.entries(BOT_KNOWLEDGE.topics)) {
     if (topicData.keywords) {
       if (topicData.keywords.some((kw) => lower.includes(kw))) {
-        return topicData.response
+        return sanitizeText(topicData.response)
       }
     }
   }
 
-  return BOT_KNOWLEDGE.topics.default.response
+  return sanitizeText(BOT_KNOWLEDGE.topics.default.response)
 }
 
 function MessageBubble({ msg, isLast }) {
@@ -93,7 +97,9 @@ const INITIAL_MESSAGES = [
   {
     id: 1,
     role: 'bot',
-    text: "Namaste! 🙏 Welcome to ElectAssist — your interactive guide to the Indian democratic process.\n\nI'm here to help you understand everything about elections — voter registration, polling procedures, EVMs, NOTA, and the Model Code of Conduct.\n\n**What can I help you with today?**",
+    text: sanitizeText(
+      "Namaste! 🙏 Welcome to ElectAssist — your interactive guide to the Indian democratic process.\n\nI'm here to help you understand everything about elections — voter registration, polling procedures, EVMs, NOTA, and the Model Code of Conduct.\n\n**What can I help you with today?**"
+    ),
     time: getTime(),
   },
 ]
